@@ -449,10 +449,14 @@ var resizePizzas = function(size) {
 
   // Iterates through pizza elements on the page and changes their widths
   function changePizzaSizes(size) {
-    for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
-      var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-      var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+    /** CODE CHANGES
+     *  1. document.querySelectorAll(".randomPizzaContainer") removed from the for loop
+     *  2. Once all Pizzas have the same offsetwidth it's unnecessary do a loop over all pizzas to get the newWidth */
+    var allPizza = document.querySelectorAll(".randomPizzaContainer");
+    var dx = determineDx(allPizza[1], size);
+    var newwidth = (allPizza[1].offsetWidth + dx) + 'px';
+    for (var i = 0; i < allPizza.length; i++) {
+      allPizza[i].style.width = newwidth;
     }
   }
 
@@ -501,10 +505,12 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
+  /** Removed document.documentElement.scrollTop from the for loop  */
+  // document.body.scrollTop is no longer supported in Chrome.
+  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
   var items = document.querySelectorAll('.mover');
   for (var i = 0; i < items.length; i++) {
-    // document.body.scrollTop is no longer supported in Chrome.
-    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
     var phase = Math.sin((scrollTop / 1250) + (i % 5));
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
@@ -526,6 +532,8 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
+  /** Remove document.querySelector("#movingPizzas1") query from the loop*/
+  var movingPizza = document.querySelector("#movingPizzas1")
   for (var i = 0; i < 200; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
@@ -534,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.style.width = "73.333px";
     elem.basicLeft = (i % cols) * s;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
-    document.querySelector("#movingPizzas1").appendChild(elem);
+    movingPizza.appendChild(elem);
   }
   updatePositions();
 });
